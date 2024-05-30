@@ -2,10 +2,11 @@ const canvas = document.createElement("canvas");
 canvas.width = 512;
 canvas.height = 512;
 const headers = {
+  "Access-Control-Allow-Origin": "*", // This should be configured on the server-side
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS", // Necessary CORS headers
   "Content-Type": "application/json",
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST,PATCH,OPTIONS",
 };
+
 const proxyUrl = "https:/rtx3090.loclx.io/generate"; // The proxy URL you're running
 const apiUrl = "https://rtx3090.loclx.io/generate"; // Your Flask API endpoint
 
