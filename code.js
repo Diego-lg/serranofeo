@@ -102,32 +102,14 @@ async function renderAi(event) {
       context.clearRect(0, 0, canvas.width, canvas.height);
       context.drawImage(imgElement, 0, 0, canvas.width, canvas.height);
       context.fillText(inputValue, 10, 50); // Draw the new text
+      loadingScreen.style.display = "none";
+
+      hideLoadingScreen();
     } else {
       console.error("Failed to fetch image:", response.statusText);
     }
   } catch (error) {
     console.error("An error occurred:", error);
-  }
-}
-function convertToBase64() {
-  const fileInput = document.getElementById("imageInput");
-  const base64Result = document.getElementById("base64Result");
-
-  const selectedFile = fileInput.files[0];
-
-  if (selectedFile) {
-    const reader = new FileReader();
-
-    reader.onload = function (event) {
-      const base64String = event.target.result;
-      base64Result.innerHTML = `${base64String}`;
-
-      renderAi(event);
-    };
-
-    reader.readAsDataURL(selectedFile);
-  } else {
-    base64Result.innerHTML = "No image selected.";
   }
 }
 
@@ -158,10 +140,14 @@ function previewImage() {
 function convertToJpgAndBase64() {
   const fileInput = document.getElementById("imageInput");
   const base64Result = document.getElementById("base64Result");
+  const loadingScreen = document.getElementById("loadingScreen");
 
   const selectedFile = fileInput.files[0];
 
   if (selectedFile) {
+    // Show loading screen
+    loadingScreen.style.display = "block";
+    showLoadingScreen();
     const reader = new FileReader();
 
     reader.onload = function (event) {
@@ -185,6 +171,8 @@ function convertToJpgAndBase64() {
             const base64String = event.target.result;
             base64Result.innerHTML = base64String;
 
+            // Hide loading screen after rendering is done
+
             // You can now use the base64String as needed
             renderAi(event);
           };
@@ -200,4 +188,11 @@ function convertToJpgAndBase64() {
   } else {
     base64Result.innerHTML = "No image selected.";
   }
+}
+function showLoadingScreen() {
+  document.getElementById("loadingScreen").classList.add("show");
+}
+
+function hideLoadingScreen() {
+  document.getElementById("loadingScreen").classList.remove("show");
 }
