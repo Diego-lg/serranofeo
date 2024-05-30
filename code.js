@@ -1,13 +1,8 @@
 const canvas = document.createElement("canvas");
 canvas.width = 512;
 canvas.height = 512;
-const headers = {
-  "Access-Control-Allow-Origin": "*", // This should be configured on the server-side
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS", // Necessary CORS headers
-  "Content-Type": "application/json",
-};
 
-const proxyUrl = "https:/rtx3090.loclx.io/generate"; // The proxy URL you're running
+const proxyUrl = "https://rtx3090.loclx.io/generate"; // The proxy URL you're running
 const apiUrl = "https://rtx3090.loclx.io/generate"; // Your Flask API endpoint
 
 const inputElement = document.getElementById("prompt");
@@ -44,7 +39,6 @@ async function run(event) {
     };
     const response = await fetch(proxyUrl, {
       method: "POST",
-
       headers: {
         "Content-Type": "application/json",
       },
@@ -84,7 +78,6 @@ async function renderAi(event) {
     };
     const response = await fetch(proxyUrl, {
       method: "POST",
-
       headers: {
         "Content-Type": "application/json",
       },
@@ -102,8 +95,6 @@ async function renderAi(event) {
       context.clearRect(0, 0, canvas.width, canvas.height);
       context.drawImage(imgElement, 0, 0, canvas.width, canvas.height);
       context.fillText(inputValue, 10, 50); // Draw the new text
-      loadingScreen.style.display = "none";
-
       hideLoadingScreen();
     } else {
       console.error("Failed to fetch image:", response.statusText);
@@ -113,8 +104,29 @@ async function renderAi(event) {
   }
 }
 
-// JavaScript function to previsualize the uploaded image
+function convertToBase64() {
+  const fileInput = document.getElementById("imageInput");
+  const base64Result = document.getElementById("base64Result");
 
+  const selectedFile = fileInput.files[0];
+
+  if (selectedFile) {
+    const reader = new FileReader();
+
+    reader.onload = function (event) {
+      const base64String = event.target.result;
+      base64Result.innerHTML = `${base64String}`;
+
+      renderAi(event);
+    };
+
+    reader.readAsDataURL(selectedFile);
+  } else {
+    base64Result.innerHTML = "No image selected.";
+  }
+}
+
+// JavaScript function to previsualize the uploaded image
 function previewImage() {
   var imageInput = document.getElementById("imageInput");
   var imagePreview = document.getElementById("imagePreview");
@@ -140,14 +152,10 @@ function previewImage() {
 function convertToJpgAndBase64() {
   const fileInput = document.getElementById("imageInput");
   const base64Result = document.getElementById("base64Result");
-  const loadingScreen = document.getElementById("loadingScreen");
 
   const selectedFile = fileInput.files[0];
-
+  showLoadingScreen();
   if (selectedFile) {
-    // Show loading screen
-    loadingScreen.style.display = "block";
-    showLoadingScreen();
     const reader = new FileReader();
 
     reader.onload = function (event) {
@@ -170,8 +178,6 @@ function convertToJpgAndBase64() {
           jpgReader.onload = function (event) {
             const base64String = event.target.result;
             base64Result.innerHTML = base64String;
-
-            // Hide loading screen after rendering is done
 
             // You can now use the base64String as needed
             renderAi(event);
@@ -196,3 +202,4 @@ function showLoadingScreen() {
 function hideLoadingScreen() {
   document.getElementById("loadingScreen").classList.remove("show");
 }
+hideLoadingScreen();
